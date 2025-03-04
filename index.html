@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pendataan Pre Order</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="items.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="py-4 text-2xl font-bold text-gray-900">Sistem Pendataan Pre Order</h1>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <nav class="flex space-x-4" aria-label="Tabs">
+            <button onclick="showSection('items')" class="tab-btn bg-white px-4 py-2 rounded-lg font-medium text-gray-900 hover:bg-blue-50" data-section="items">
+                <i class="fas fa-box mr-2"></i>Daftar Item
+            </button>
+            <button onclick="showSection('pending')" class="tab-btn bg-white px-4 py-2 rounded-lg font-medium text-gray-900 hover:bg-blue-50 active" data-section="pending">
+                <i class="fas fa-clock mr-2"></i>Pre Order Diterima
+            </button>
+            <button onclick="showSection('completed')" class="tab-btn bg-white px-4 py-2 rounded-lg font-medium text-gray-900 hover:bg-blue-50" data-section="completed">
+                <i class="fas fa-check-circle mr-2"></i>Pre Order Selesai
+            </button>
+            <button onclick="showSection('profit')" class="tab-btn bg-white px-4 py-2 rounded-lg font-medium text-gray-900 hover:bg-blue-50" data-section="profit">
+                <i class="fas fa-chart-line mr-2"></i>Keuntungan
+            </button>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <!-- Items Section -->
+        <section id="items-section" class="section-content hidden">
+            <!-- Form untuk menambah item baru -->
+            <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
+                <h2 class="text-lg font-semibold mb-4">Tambah Item Baru</h2>
+                <form id="item-form" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="itemName" class="block text-sm font-medium text-gray-700">Nama Item</label>
+                            <input type="text" id="itemName" name="itemName" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="itemCategory" class="block text-sm font-medium text-gray-700">Kategori</label>
+                            <select id="itemCategory" name="itemCategory" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="Sepatu">Sepatu</option>
+                                <option value="Baju">Baju</option>
+                                <option value="Celana">Celana</option>
+                                <option value="Aksesoris">Aksesoris</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="itemPrice" class="block text-sm font-medium text-gray-700">Harga (Rp)</label>
+                            <input type="number" id="itemPrice" name="itemPrice" required min="0"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="itemVariants" class="block text-sm font-medium text-gray-700">Varian (pisahkan dengan koma)</label>
+                            <input type="text" id="itemVariants" name="itemVariants" required placeholder="S, M, L, XL"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="itemDescription" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+                        <textarea id="itemDescription" name="itemDescription" rows="2" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Tambah Item
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Daftar item yang tersedia -->
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-lg font-semibold mb-4">Daftar Item Tersedia</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="items-grid">
+                    <!-- Items will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Pending Orders Section -->
+        <section id="pending-section" class="section-content">
+            <!-- Form untuk menambah pre order baru -->
+            <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
+                <h2 class="text-lg font-semibold mb-4">Tambah Pre Order Baru</h2>
+                <form id="order-form" class="space-y-4">
+                    <div>
+                        <label for="customerName" class="block text-sm font-medium text-gray-700">Nama Pelanggan</label>
+                        <input type="text" id="customerName" name="customerName" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Item</label>
+                        <div id="selected-items" class="space-y-4 mb-4">
+                            <!-- Selected items will be displayed here -->
+                        </div>
+                        <button type="button" onclick="showItemSelector()"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-plus mr-2"></i>
+                            Tambah Item
+                        </button>
+                    </div>
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-gray-700">Catatan Tambahan</label>
+                        <textarea id="notes" name="notes" rows="3"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            placeholder="Catatan khusus untuk pre order ini..."></textarea>
+                    </div>
+                    <div>
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Tambah Pre Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Daftar Pre Order yang Diterima -->
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-lg font-semibold mb-4">Daftar Pre Order Diterima</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Order</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Pelanggan</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detail</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-orders" class="bg-white divide-y divide-gray-200">
+                            <!-- Data akan diisi melalui JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Completed Orders Section -->
+        <section id="completed-section" class="section-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-lg font-semibold mb-4">Daftar Pre Order Selesai</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Order</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Pelanggan</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detail</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Selesai</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completed-orders" class="bg-white divide-y divide-gray-200">
+                            <!-- Data akan diisi melalui JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profit Section -->
+        <section id="profit-section" class="section-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-lg font-semibold mb-4">Laporan Keuntungan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="text-sm font-medium text-green-800 mb-2">Total Pendapatan</h3>
+                        <p id="total-profit" class="text-2xl font-bold text-green-600">Rp 0</p>
+                    </div>
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="text-sm font-medium text-blue-800 mb-2">Jumlah Order Selesai</h3>
+                        <p id="completed-count" class="text-2xl font-bold text-blue-600">0</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <!-- Item Selector Modal -->
+    <div id="item-selector-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden">
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="w-full">
+                                <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4">Pilih Item</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="modal-items-grid">
+                                    <!-- Items will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <button type="button" onclick="hideItemSelector()" 
+                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300">
+        <p id="toast-message"></p>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
